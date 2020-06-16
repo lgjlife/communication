@@ -1,12 +1,12 @@
 package com.communication.io.bio.client;
 
-import com.communication.io.bio.common.ClientDataHandler;
+import com.communication.io.common.ClientDataHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Random;
 
 @Slf4j
-public class SocketClientDemo {
+public class BioSocketClientDemo {
 
     public static void main(String args[]) throws Exception{
 
@@ -15,7 +15,7 @@ public class SocketClientDemo {
 
 
         for(int i = 0; i< 2; i++){
-            FxSocketClient client = new FxSocketClient(host,port,"client-1");
+            BioSocketClient client = new BioSocketClient(host,port,"client-1");
             client.connect();
             try{
                 client.request("客户端数据:"+new Random().nextInt(100),new ClientDataHandler(){

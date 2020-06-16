@@ -15,7 +15,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.SocketHandler;
 
 @Slf4j
-public class FxSocketServer {
+public class BioSocketServer {
 
     private final int DEFAULT_PORT = 8000;
     private int port = DEFAULT_PORT;
@@ -26,15 +26,15 @@ public class FxSocketServer {
 
 
 
-    public FxSocketServer() {
+    public BioSocketServer() {
 
     }
 
-    public FxSocketServer(int port) {
+    public BioSocketServer(int port) {
         this.port = port;
     }
 
-    public FxSocketServer(int port, int threadNum) {
+    public BioSocketServer(int port, int threadNum) {
         this.port = port;
         this.threadNum = threadNum;
     }

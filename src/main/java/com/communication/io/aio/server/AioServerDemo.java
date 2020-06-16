@@ -1,10 +1,10 @@
 package com.communication.io.aio.server;
 
-public class FxAioServerDemo {
+public class AioServerDemo {
 
     public static void main(String args[]){
 
-        FxAIOServer server = new FxAIOServer();
+        AioServer server = new AioServer();
         server.init();
     }
 }

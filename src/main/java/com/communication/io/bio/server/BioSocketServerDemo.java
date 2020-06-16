@@ -1,10 +1,10 @@
 package com.communication.io.bio.server;
 
-public class SocketServerDemo {
+public class BioSocketServerDemo {
 
     public static void main(String args[]){
 
-        FxSocketServer socketServer = new FxSocketServer(8000,10);
+        BioSocketServer socketServer = new BioSocketServer(8000,10);
         socketServer.acceptTask();
     }
 }

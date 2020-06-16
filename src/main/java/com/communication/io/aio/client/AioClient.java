@@ -1,11 +1,9 @@
 package com.communication.io.aio.client;
 
-import com.communication.io.bio.client.FxSocketClient;
-import com.communication.io.bio.common.ClientDataHandler;
+import com.communication.io.common.ClientDataHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
@@ -17,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
-public class FxAioClient {
+public class AioClient {
 
     private final String DEFAULT_HOST =  "127.0.0.1";
     private final int DEFAULT_PORT = 8000;
@@ -32,7 +30,7 @@ public class FxAioClient {
 
     private ConnectStatus connectStatus = ConnectStatus.DISCONNECT;
 
-    public FxAioClient(String host, int port) {
+    public AioClient(String host, int port) {
         this.host = host;
         this.port = port;
     }

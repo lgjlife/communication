@@ -9,16 +9,22 @@ import java.nio.channels.*;
 import java.util.Iterator;
 import java.util.Random;
 
+/**
+ *功能描述  nio服务端
+ * @author lgj
+ * @Description 
+ * @date 6/16/20
+*/
 
 @Slf4j
-public class FxNIOServer {
+public class NioServer {
 
     private final int DEFAULT_PORT = 8000;
     private int port = DEFAULT_PORT;
 
     private ServerSocketChannel serverSocketChannel;
 
-    public FxNIOServer(int port) {
+    public NioServer(int port) {
         this.port = port;
     }
 
@@ -38,6 +44,12 @@ public class FxNIOServer {
 
     }
 
+    /**
+     *功能描述 用于轮询select
+     * @author lgj
+     * @Description 
+     * @date 6/16/20
+    */
     private class  WorkHandle extends Thread{
 
         private Selector selector ;
@@ -52,11 +64,8 @@ public class FxNIOServer {
 
             log.info("事件处理....");
             while (true){
-
                try{
-
                    selector.select();
-
                    Iterator<SelectionKey> selectionKeyIterator =   selector.selectedKeys().iterator();
 
                    while (selectionKeyIterator.hasNext()){
@@ -67,19 +76,19 @@ public class FxNIOServer {
                        {
                            continue;
                        }
-
+                        //连接事件
                        if(selectionKey.isAcceptable()){
 
                            accept(selectionKey);
                        }
-
+                        //channel有数据可读
                        if(selectionKey.isReadable()){
                            read(selectionKey);
                            write(selectionKey);
                        }
-
+                        //可写事件，最好不要监听可写事件，也就是 不要配置SelectionKey.OP_WRITE
                        if(selectionKey.isWritable()){
-                            write(selectionKey);
+                            //write(selectionKey);
                        }
 
 

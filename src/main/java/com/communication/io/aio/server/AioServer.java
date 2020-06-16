@@ -1,26 +1,18 @@
 package com.communication.io.aio.server;
 
-import com.communication.io.bio.server.FxSocketServer;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 
 @Slf4j
-public class FxAIOServer {
+public class AioServer {
 
     private final int DEFAULT_PORT = 8000;
     private int port = DEFAULT_PORT;
@@ -28,10 +20,10 @@ public class FxAIOServer {
     private AsynchronousServerSocketChannel socketChannel;
     private ExecutorService executorService;
 
-    public FxAIOServer() {
+    public AioServer() {
     }
 
-    public FxAIOServer(int port) {
+    public AioServer(int port) {
         this.port = port;
     }
 

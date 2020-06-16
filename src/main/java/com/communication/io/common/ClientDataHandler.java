@@ -1,4 +1,4 @@
-package com.communication.io.bio.common;
+package com.communication.io.common;
 
 public interface ClientDataHandler {
 

@@ -1,6 +1,6 @@
 package com.communication.io.bio.client;
 
-import com.communication.io.bio.common.ClientDataHandler;
+import com.communication.io.common.ClientDataHandler;
 import com.communication.io.bio.protocol.Protocol;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +19,7 @@ import java.util.concurrent.*;
  * @date 6/15/20
 */
 @Slf4j
-public class FxSocketClient {
+public class BioSocketClient {
 
 
     private final String DEFAULT_HOST =  "127.0.0.1";
@@ -38,7 +38,7 @@ public class FxSocketClient {
 
 
 
-    public FxSocketClient(String host, int port, String name) {
+    public BioSocketClient(String host, int port, String name) {
         this.host = host;
         this.port = port;
         this.name = name;
