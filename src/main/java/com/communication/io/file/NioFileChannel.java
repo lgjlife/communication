@@ -46,9 +46,11 @@ public class NioFileChannel {
 
     }
 
-    public void read()throws Exception{
+    public void read(int position)throws Exception{
         ByteBuffer readBuf = ByteBuffer.allocate(100);
         log.info("readBuf = " + readBuf);
+
+        fileChannel.position(position);
         int readC =  fileChannel.read(readBuf);
         log.info("readBuf = " + readBuf);
 

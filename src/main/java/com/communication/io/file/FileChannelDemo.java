@@ -15,7 +15,7 @@ public class FileChannelDemo {
             NioFileChannel nioFileChannel = new NioFileChannel("/home/lgj/aaa/test.test","rw");
             nioFileChannel.write("飞翔的开发了和");
             Thread.sleep(100);
-            nioFileChannel.read();
+            nioFileChannel.read(0);
         }
         catch(Exception ex){
             ex.printStackTrace();
