@@ -30,18 +30,22 @@ public class NioServer {
 
     public void startServer() throws Exception{
 
+        //打开服务器通道
         serverSocketChannel = ServerSocketChannel.open();
+
+
+        //配置为非阻塞，必须
         serverSocketChannel.configureBlocking(false);
 
         log.info("监听端口[{}].....",port);
+        //监听端口
         serverSocketChannel.bind(new InetSocketAddress(port));
-
+        //开启多路复用器
         Selector selector = Selector.open();
+        //绑定多路复用器到channel，并设定关注事件
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-
+        //创建线程进行轮询多路复用器
         new WorkHandle(selector).start();
-
-
     }
 
     /**
@@ -65,13 +69,15 @@ public class NioServer {
             log.info("事件处理....");
             while (true){
                try{
+                   //监听事件，没有事件发生将阻塞
                    selector.select();
+                   //获取事件列表
                    Iterator<SelectionKey> selectionKeyIterator =   selector.selectedKeys().iterator();
 
                    while (selectionKeyIterator.hasNext()){
                        SelectionKey selectionKey = selectionKeyIterator.next();
                        selectionKeyIterator.remove();
-
+                        //无效事件
                        if(!selectionKey.isValid())
                        {
                            continue;
@@ -83,10 +89,14 @@ public class NioServer {
                        }
                         //channel有数据可读
                        if(selectionKey.isReadable()){
+                           //数据读完有两种操作
+                           //1.在当前线程处理，适用于处理时间不长的任务，时间太长会影响其他key的处理
+                           //2.创建新线程进行处理，适用于处理时间较长的任务
                            read(selectionKey);
                            write(selectionKey);
                        }
                         //可写事件，最好不要监听可写事件，也就是 不要配置SelectionKey.OP_WRITE
+                       //因为在空闲的时候，可写事件一定会发生，导致空轮询
                        if(selectionKey.isWritable()){
                             //write(selectionKey);
                        }

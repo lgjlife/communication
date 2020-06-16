@@ -32,6 +32,8 @@ public class AioServer {
 
         try{
             socketChannel = AsynchronousServerSocketChannel.open();
+
+
             log.info("监听端口{}....",port);
             socketChannel.bind(new InetSocketAddress(port));
             executorService = Executors.newCachedThreadPool();
@@ -96,7 +98,7 @@ public class AioServer {
     private void read(AsynchronousSocketChannel channel) throws Exception{
         ByteBuffer buffer = ByteBuffer.allocate(1000);
 
-
+        buffer.duplicate();
             log.info("read start");
             //阻塞
             int len = channel.read(buffer).get();
