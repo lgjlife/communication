@@ -37,7 +37,7 @@ public class UdpClient {
         try{
             log.info("正在连接:[{}:{}]....",host,port);
             datagramChannel = DatagramChannel.open();
-            datagramChannel.connect(new InetSocketAddress(port));
+            //datagramChannel.connect(new InetSocketAddress(port));
             log.info("连接:[{}:{}]成功",host,port);
         }
         catch(Exception ex){
@@ -75,7 +75,7 @@ public class UdpClient {
         ByteBuffer buf = ByteBuffer.allocate(100);
         buf.put(("这是客户端的数据" + new Date().toString()).getBytes("utf-8"));
         buf.flip();
-        datagramChannel.write(buf);
+        datagramChannel.send(buf,new InetSocketAddress(host,port));
 
 
     }
