@@ -13,3 +13,7 @@
 
 [AIO Demo](https://github.com/lgjlife/communication/tree/master/src/main/java/com/communication/io/aio)
 
+## FileChannel
+
+[FileChannel Demo](https://github.com/lgjlife/communication/tree/master/src/main/java/com/communication/io/file)
+

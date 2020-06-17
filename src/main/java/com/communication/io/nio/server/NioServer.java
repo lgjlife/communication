@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.util.Iterator;
@@ -37,9 +38,19 @@ public class NioServer {
         //配置为非阻塞，必须
         serverSocketChannel.configureBlocking(false);
 
+        serverSocketChannel.socket().getChannel();
+
         log.info("监听端口[{}].....",port);
         //监听端口
         serverSocketChannel.bind(new InetSocketAddress(port));
+
+        ServerSocketChannel ssc = ServerSocketChannel.open( );
+        ServerSocket serverSocket = ssc.socket( );
+
+        serverSocket.bind (new InetSocketAddress (1234));
+
+
+
         //开启多路复用器
         Selector selector = Selector.open();
         //绑定多路复用器到channel，并设定关注事件

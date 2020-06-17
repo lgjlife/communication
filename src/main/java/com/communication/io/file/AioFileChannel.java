@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.CompletionHandler;
+import java.nio.channels.FileLock;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.concurrent.Future;
 
 @Slf4j
 public class AioFileChannel {
@@ -67,6 +69,18 @@ public class AioFileChannel {
         buf.clear();
         buf.put(data.getBytes("UTF-8"));
         buf.flip();
+
+        log.info("加锁....");
+
+//        Future<FileLock> future  = channel.lock();
+//        FileLock lock = future.get();
+
+
+        FileLock lock = channel.tryLock();
+
+        log.info("加锁成功");
+        Thread.sleep(Integer.MAX_VALUE);
+
         channel.write(buf, pos, null, new CompletionHandler<Integer, Object>() {
             @Override
             public void completed(Integer result, Object attachment) {
@@ -79,7 +93,8 @@ public class AioFileChannel {
             }
         });
         channel.force(true);
-
+        lock.release();
+        log.info("解锁...");
 
 
 
