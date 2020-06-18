@@ -59,6 +59,7 @@ public class BioSocketClient {
             log.info(String.format("Connect to %s:%d ....",host,port));
             //此方法不会阻塞
             socket = new Socket(host,port);
+
             connectStatus = ConnectStatus.CONNECTED;
             log.info(String.format("Connect to %s:%d success ",host,port));
         }

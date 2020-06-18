@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketOption;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
 
 /**
  *功能描述  nio服务端
@@ -35,6 +37,9 @@ public class NioServer {
         serverSocketChannel = ServerSocketChannel.open();
 
 
+
+
+
         //配置为非阻塞，必须
         serverSocketChannel.configureBlocking(false);
 
@@ -44,10 +49,7 @@ public class NioServer {
         //监听端口
         serverSocketChannel.bind(new InetSocketAddress(port));
 
-        ServerSocketChannel ssc = ServerSocketChannel.open( );
-        ServerSocket serverSocket = ssc.socket( );
 
-        serverSocket.bind (new InetSocketAddress (1234));
 
 
 
