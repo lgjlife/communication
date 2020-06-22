@@ -41,17 +41,13 @@ public class NioServer {
 
 
         //配置为非阻塞，必须
-        serverSocketChannel.configureBlocking(false);
+       // serverSocketChannel.configureBlocking(false);
 
         serverSocketChannel.socket().getChannel();
 
         log.info("监听端口[{}].....",port);
         //监听端口
         serverSocketChannel.bind(new InetSocketAddress(port));
-
-
-
-
 
         //开启多路复用器
         Selector selector = Selector.open();

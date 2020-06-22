@@ -2,6 +2,7 @@ package com.communication.test;
 
 import java.io.RandomAccessFile;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.channels.*;
 
 public class Test {
@@ -13,6 +14,9 @@ public class Test {
         String somelocalport = "";
 
         SocketChannel sc = SocketChannel.open( );
+
+        Socket socket = sc.socket();
+
         sc.connect (new InetSocketAddress("somehost", someport));
 //nio server
         ServerSocketChannel ssc = ServerSocketChannel.open( );
