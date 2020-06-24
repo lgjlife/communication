@@ -2,10 +2,9 @@ package com.communication.netty.server;
 
 import com.communication.netty.client.ClientChannelInboundHandlerAdapter;
 import com.communication.netty.client.ClientChannelOutboundHandlerAdapter;
+import com.communication.netty.server.handler.ServerChannelTrafficShapingHandler;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 
 import io.netty.channel.socket.ServerSocketChannel;
@@ -15,6 +14,7 @@ import io.netty.handler.codec.FixedLengthFrameDecoder;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -39,17 +39,23 @@ public class NettyServer {
         try{
 
             ServerBootstrap serverBootstrap = new ServerBootstrap();
-        serverBootstrap.group(master,worker)
+
+            serverBootstrap.group(master,worker)
                 .channel(NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer<SocketChannel>(){
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
+
+                        ChannelPipeline pipeline = socketChannel.pipeline();
+
+                        //pipeline.addLast(new ChannelTrafficShapingHandler(1000,1000));
+                        pipeline.addLast(new ServerChannelTrafficShapingHandler());
+
                         //输入
+                       // socketChannel.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024,0,1,0,1));
+                        //socketChannel.pipeline().addLast(new StringDecoder());
 
-
-                        socketChannel.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024,0,1,0,1));
-                        socketChannel.pipeline().addLast(new StringDecoder());
-                        socketChannel.pipeline().addLast(new ServerChannelInboundHandlerAdapter());
+                        //socketChannel.pipeline().addLast(new ServerChannelInboundHandlerAdapter());
                         //输出
                        // socketChannel.pipeline().addLast(new ServerChannelOutboundHandlerAdapter());
                     }
@@ -57,6 +63,8 @@ public class NettyServer {
             log.info("绑定端口[{}]",port);
             serverBootstrap.bind(port).sync();
 
+
+           // master.shutdownGracefully();
         }
         catch(Exception ex){
             log.error(ex.getMessage());

@@ -42,7 +42,7 @@ public class ClientChannelInboundHandlerAdapter extends ChannelInboundHandlerAda
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        log.info("取消[{}]激活了...",ctx.channel().remoteAddress());
+        log.info("取消[{}]激活",ctx.channel().remoteAddress());
 
 
     }

@@ -17,6 +17,8 @@ public class InboundHandlerA extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
         log.info(ctx.name()+"- InboundHandlerA - channelRead");
+
+
         super.channelRead(ctx, msg);
 
 
