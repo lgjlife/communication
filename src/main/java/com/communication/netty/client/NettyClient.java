@@ -6,10 +6,7 @@ import com.sun.corba.se.spi.activation.RepositoryPackage.ServerDef;
 import com.sun.javafx.scene.control.skin.LabeledImpl;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.BootstrapConfig;
-import io.netty.buffer.AbstractReferenceCountedByteBuf;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.CompositeByteBuf;
-import io.netty.buffer.Unpooled;
+import io.netty.buffer.*;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 
@@ -38,6 +35,8 @@ public class NettyClient {
 
     private ConcurrentHashMap<ServerDef,Channel> serverCache = new ConcurrentHashMap<>();
 
+    private PooledByteBufAllocator allocator = new PooledByteBufAllocator(true);
+
     //工作线程池,默认cpu * 2
     EventLoopGroup worker = new NioEventLoopGroup();
 
@@ -54,22 +53,28 @@ public class NettyClient {
     public void buildBootstrap(){
 
         bootstrap = new Bootstrap();
-        bootstrap.group(worker)
-                .channel(NioSocketChannel.class);
+        bootstrap.group(worker);
+        bootstrap.option(ChannelOption.ALLOCATOR, new PooledByteBufAllocator(true));
+
+        //bootstrap.option(ChannelOption.RCVBUF_ALLOCATOR, AdaptiveRecvByteBufAllocator.DEFAULT);
+       // bootstrap.option(ChannelOption.RCVBUF_ALLOCATOR, new PooledByteBufAllocator());
+        bootstrap.channel(NioSocketChannel.class);
         bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,100);
+        bootstrap.option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK,75536);
         bootstrap.handler(new ChannelInitializer(){
             @Override
             protected void initChannel(Channel channel) throws Exception {
 
                 ChannelPipeline pipeline = channel.pipeline();
-                pipeline.addLast(new ClientChannelTrafficShapingHandler());
-                //   pipeline.addLast(new ChannelTrafficShapingHandler(1024,1024));
-
+                //pipeline.addLast(new ChannelTrafficShapingHandler(1024,1024*1024,100));
+                //pipeline.addLast(new ClientChannelTrafficShapingHandler());
+                pipeline.addLast(new InboundHandlerA());
+                pipeline.addLast(new OutboundHandlerA());
 //                 //   pipeline.addLast( new ClientIdleStateHandller(0,4,1, TimeUnit.SECONDS));
 //                    pipeline.addLast("2", new InboundHandlerB());
-//                    pipeline.addLast("3", new OutboundHandlerA());
+
 //                    pipeline.addLast("4", new OutboundHandlerB());
-//                   // pipeline.addLast("5", new InboundOutboundHandlerX());
+//                   //
 //
 //                    //输入
 //                    pipeline.addLast(new LengthFieldBasedFrameDecoder(1024,0,1,0,1));
@@ -80,6 +85,10 @@ public class NettyClient {
 //                    channel.pipeline().addLast("6",new ClientChannelOutboundHandlerAdapter());
             }
         });
+
+
+      //worker.shutdownGracefully();
+
 
 
     }
@@ -93,7 +102,7 @@ public class NettyClient {
 
             log.info("正在连接[{}:{}]...",host,port);
 
-
+            bootstrap.connect(host,port).sync();
 
             ChannelFuture channelFuture =  bootstrap.connect(host,port).sync();
 
@@ -102,12 +111,7 @@ public class NettyClient {
             log.info("连接[{}:{}]成功！",host,port);
             connectStates.put(serverDef,ConnectState.Connected);
 
-            ChannelConfig channelConfig = channel.config();
-
-            Map<ChannelOption<?>, Object> ops = channelConfig.getOptions();
-            ops.forEach((key,val)->{
-                //log.info("{}　　{} ",key,val);
-            });
+            printConfig(channel);
         }
         catch(Exception ex){
             log.error("连接{}:{}失败",host,port);
@@ -115,6 +119,15 @@ public class NettyClient {
             reConect(serverDef,host, port);
         }
 
+    }
+
+    private void printConfig(Channel channel){
+        ChannelConfig channelConfig = channel.config();
+
+        Map<ChannelOption<?>, Object> ops = channelConfig.getOptions();
+        ops.forEach((key,val)->{
+            log.info("{}　　{} ",key,val);
+        });
     }
 
     private void reConect(ServerDef serverDef , String host, int port){
@@ -170,20 +183,32 @@ public class NettyClient {
 
 
         Channel channel = serverCache.get(new ServerDef(host, port));
+
+        log.info("channel = " + channel);
         if(channel == null){
             throw  new UnConnectServerException(String.format("Unconnect to %s:%d",host,port));
         }
-        if (channel.isOpen()){
+        ByteBuf message = allocator.buffer(data.length);
+        message.writeBytes(data);
 
-            ByteBuf message = Unpooled.buffer(data.length);
-            message.writeBytes(data);
-            channel.writeAndFlush(message);
+        channel.writeAndFlush(message);
+        if(channel.isWritable()){
+
+            log.info("channel.isWritable");
+
+            return;
         }
-        else {
-            log.info("与服务端未连接");
+        log.info("channel is not Writable");
+        closePrint();
+
+    }
+
+    private void closePrint(){
+
+        for(int i = 0; i< 20; i++){
+
+            System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         }
-
-
     }
 
     class ServerDef{

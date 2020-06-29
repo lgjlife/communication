@@ -2,10 +2,7 @@ package com.communication.netty.client.handler;
 
 import com.communication.netty.client.data.ByteCounter;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelOutboundHandlerAdapter;
-import io.netty.channel.ChannelPromise;
+import io.netty.channel.*;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -14,6 +11,7 @@ public class ClientChannelTrafficShapingHandler extends ChannelOutboundHandlerAd
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 
+        EventLoop eventLoop =  ctx.channel().eventLoop();
         int len = ((ByteBuf)msg).readableBytes();
         log.info("发送数据的长度为:"+len);
 

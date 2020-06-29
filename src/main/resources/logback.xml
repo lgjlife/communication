@@ -8,6 +8,7 @@
     </appender>
 
     <logger name="com.communication" level="info"/>
+    <logger name="io.netty" level="debug"/>
     <!--<logger name="com.communication" level="error"/>-->
 
     <root level="error">

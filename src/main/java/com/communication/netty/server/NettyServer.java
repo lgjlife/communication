@@ -2,6 +2,7 @@ package com.communication.netty.server;
 
 import com.communication.netty.client.ClientChannelInboundHandlerAdapter;
 import com.communication.netty.client.ClientChannelOutboundHandlerAdapter;
+import com.communication.netty.server.handler.InboundHandlerA;
 import com.communication.netty.server.handler.ServerChannelTrafficShapingHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -47,10 +48,9 @@ public class NettyServer {
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
 
                         ChannelPipeline pipeline = socketChannel.pipeline();
-
-                        //pipeline.addLast(new ChannelTrafficShapingHandler(1000,1000));
-                        pipeline.addLast(new ServerChannelTrafficShapingHandler());
-
+                        pipeline.addLast(new InboundHandlerA());
+                    //    pipeline.addLast(new ChannelTrafficShapingHandler(1024*1024,1024*1024,1000,200));
+                        //pipeline.addLast(new ServerChannelTrafficShapingHandler());
                         //输入
                        // socketChannel.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024,0,1,0,1));
                         //socketChannel.pipeline().addLast(new StringDecoder());

@@ -54,7 +54,7 @@ public class ServerChannelTrafficShapingHandler extends ChannelInboundHandlerAda
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
         int len = ((ByteBuf)msg).readableBytes();
-       // log.info("接收数据的长度为:"+len);
+        //log.info("接收数据的长度为:"+len);
 
         ServerByteCounter.counter.getAndAdd(len);
         ServerByteCounter.Allcounter.getAndAdd(len);
