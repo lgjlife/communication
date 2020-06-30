@@ -49,8 +49,8 @@ public class NettyServer {
 
                         ChannelPipeline pipeline = socketChannel.pipeline();
                         pipeline.addLast(new InboundHandlerA());
-                    //    pipeline.addLast(new ChannelTrafficShapingHandler(1024*1024,1024*1024,1000,200));
-                        //pipeline.addLast(new ServerChannelTrafficShapingHandler());
+                        //pipeline.addLast(new ChannelTrafficShapingHandler(1024,2*1024*1024,5000));
+                        pipeline.addLast(new ServerChannelTrafficShapingHandler());
                         //输入
                        // socketChannel.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024,0,1,0,1));
                         //socketChannel.pipeline().addLast(new StringDecoder());

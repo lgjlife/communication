@@ -6,7 +6,7 @@ import com.communication.netty.util.DirectMemReport;
 public class NettyServerDemo {
     public static void main(String args[]){
 
-        new DirectMemReport();
+        //new DirectMemReport();
 
         NettyServer nettyServer = new NettyServer();
         nettyServer.init();

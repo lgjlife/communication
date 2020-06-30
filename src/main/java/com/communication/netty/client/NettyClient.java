@@ -56,6 +56,7 @@ public class NettyClient {
         bootstrap.group(worker);
         bootstrap.option(ChannelOption.ALLOCATOR, new PooledByteBufAllocator(true));
 
+
         //bootstrap.option(ChannelOption.RCVBUF_ALLOCATOR, AdaptiveRecvByteBufAllocator.DEFAULT);
        // bootstrap.option(ChannelOption.RCVBUF_ALLOCATOR, new PooledByteBufAllocator());
         bootstrap.channel(NioSocketChannel.class);
@@ -66,10 +67,14 @@ public class NettyClient {
             protected void initChannel(Channel channel) throws Exception {
 
                 ChannelPipeline pipeline = channel.pipeline();
-                //pipeline.addLast(new ChannelTrafficShapingHandler(1024,1024*1024,100));
-                //pipeline.addLast(new ClientChannelTrafficShapingHandler());
+
                 pipeline.addLast(new InboundHandlerA());
-                pipeline.addLast(new OutboundHandlerA());
+
+                pipeline.addLast(new ChannelTrafficShapingHandler(50*1024*1024,1024,1000));
+                pipeline.addLast(new ClientChannelTrafficShapingHandler());
+
+              //  pipeline.addLast(new InboundHandlerA());
+             //   pipeline.addLast(new OutboundHandlerA());
 //                 //   pipeline.addLast( new ClientIdleStateHandller(0,4,1, TimeUnit.SECONDS));
 //                    pipeline.addLast("2", new InboundHandlerB());
 
@@ -107,6 +112,12 @@ public class NettyClient {
             ChannelFuture channelFuture =  bootstrap.connect(host,port).sync();
 
             Channel channel =  channelFuture.channel();
+
+
+            log.info("========WriteBufferWaterMark＝{}",channel.config().getWriteBufferWaterMark());
+
+
+
             serverCache.put(serverDef,channel);
             log.info("连接[{}:{}]成功！",host,port);
             connectStates.put(serverDef,ConnectState.Connected);
@@ -114,6 +125,7 @@ public class NettyClient {
             printConfig(channel);
         }
         catch(Exception ex){
+            ex.printStackTrace();
             log.error("连接{}:{}失败",host,port);
             log.error(ex.getMessage());
             reConect(serverDef,host, port);
@@ -191,21 +203,24 @@ public class NettyClient {
         ByteBuf message = allocator.buffer(data.length);
         message.writeBytes(data);
 
-        channel.writeAndFlush(message);
+
         if(channel.isWritable()){
 
             log.info("channel.isWritable");
-
+            channel.writeAndFlush(message);
             return;
+        }else{
+            log.info("channel is not Writable");
+            closePrint();
+            message.release();
         }
-        log.info("channel is not Writable");
-        closePrint();
+
 
     }
 
     private void closePrint(){
 
-        for(int i = 0; i< 20; i++){
+        for(int i = 0; i< 1; i++){
 
             System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         }

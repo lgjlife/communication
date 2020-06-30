@@ -30,7 +30,7 @@ public class ServerChannelTrafficShapingHandler extends ChannelInboundHandlerAda
             public void run() {
                 int counter = ServerByteCounter.counter.getAndSet(0);
                 if(counter!= 0){
-                    log.info("－－－－－服务端接收数据速率:{}  bytes/s", counter);
+                    log.info("－－－－－服务端接收数据速率:{} bytes/s,{} k/s,{} M/s", counter,counter/1024.0,counter/1024.0/1024);
                 }
 
                // log.info("服务端总共接收数据:{}  bytes", ServerByteCounter.Allcounter.get());
@@ -54,7 +54,10 @@ public class ServerChannelTrafficShapingHandler extends ChannelInboundHandlerAda
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
         int len = ((ByteBuf)msg).readableBytes();
-        //log.info("接收数据的长度为:"+len);
+       // log.info("接收数据的长度为:"+len);
+
+        byte[] data = new byte[len];
+        ((ByteBuf)msg).readBytes(data);
 
         ServerByteCounter.counter.getAndAdd(len);
         ServerByteCounter.Allcounter.getAndAdd(len);
